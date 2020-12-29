@@ -1,0 +1,155 @@
+#!/bin/bash
+
+shopt -s extglob    # comment out this line to test unset extglob.
+shopt -p extglob
+
+clear
+
+dbname=$1
+tbname=$2
+
+tb=`cat ./Databases/$dbname/$tbname | wc -l`
+  
+if [ "$tb" == 0 ]
+    then
+        echo "Unfortunately, There are no Rows*"
+
+else
+    echo "Table: ""$tbname"
+    cat ./Databases/$dbname/$tbname
+
+
+    while true
+    do
+       echo  "Enter the value of primary key of the row you want to modify"
+        read val_prim
+       typeset -i  val_prim
+       ((new_tb=tb-2))
+       if [ -z $val_prim ]
+        then
+            echo Primary Key Cannot be Null
+ 
+        elif [[ ! "$val_prim" =~  ^[1-9][0-9]*$  ]]
+        then
+            echo "please enter valid number"
+        elif [[ $val_prim -gt $new_tb ]]  
+        then
+            echo "this primary key not exist"      
+        else
+                break
+        fi
+    done
+
+    while true
+    do
+       echo  "Choose Column Need To Update "
+
+     # select col in `awk -F: '{i=1; while(i<=NF){if(NR==2){print $i};i++}}' ./Databases/$dbname/$tbname`
+      #do
+      #arr[i]=$i
+       # case $REPLY in
+       # $i) $col ; break ;;
+       # *) echo "invalid n number " ;;
+       # esac
+      #done
+       typeset -i ci=2
+        for col in `awk -F: '{i=2; while(i<=NF){if(NR==2){print $i};i++}}' ./Databases/$dbname/$tbname`
+        do
+        echo $ci ")" $col
+        arr[ci]=$ci
+        ci=ci+1
+        done
+        read option
+
+#check option exist in array
+        found=0
+        for var in `echo ${arr[@]}`
+        do
+            if [ $var == $option ]
+            then
+                found=1  
+            fi
+        done
+
+        typeset -i  option
+        if [ -z $option ]
+        then
+            echo Choosen Number Cannot be Null
+
+        elif [[ ! $option =~  ^[1-9][0-9]*$  ]]
+        then
+                echo "please enter valid number"
+        elif [ $found == 0 ]
+        then
+            echo "This Option Not Exist . try again"
+        else
+            break  
+        fi
+    done
+
+#get type of option selected 
+    type_select=`awk -F: -v i=$option '{if(NR==1){print $i}}' ./Databases/$dbname/$tbname`
+    echo "type:"$type_select         
+ 
+   while true
+   do  
+        echo "enter new value"
+        read new
+
+        if [[ $type_select == "string" ]]
+        then
+        
+            if [[ ! "$new" =~  ^[[:alpha:]][[:alnum:]]*$  ]] 
+            then
+                    echo Error in Naming Format of Column 
+                    echo Must start with letter 
+                    echo Contain no spaces 
+                    echo Only AlphaNumeric is Allowed
+            else
+                    break
+            fi  
+        elif [[ $type_select == "integer" ]]  
+        then
+    
+            if [ -z $new ]
+            then
+                echo Choosen Number Cannot be Null
+
+            elif [[ ! $new =~  ^[1-9][0-9]*$  ]]
+            then
+                    echo "please enter valid number"
+            else
+                    break
+            fi 
+        else
+           echo "type not exist !!! "        
+        fi   
+    done
+        awk -F : -i inplace -v OFS=: -v ident="$val_prim" -v insert="$new" -v op="$option" '($1==ident){$op=insert} 1' ./Databases/$dbname/$tbname
+        #awk -F : -i inplace -v OFS=: -v ident="2" -v insert="4" -v op="2" '($1==ident){$op=insert} 1' ./Databases/db1/tb1
+        echo "congratulations, Your Have Updated Record Successfully "
+
+        echo "new data after update"
+        cat ./Databases/$dbname/$tbname
+       
+fi
+
+#check which Action the user need after completing his current operation
+echo "==========================================================="
+echo "please select your next action from the following actions"
+PS3="Enter Your Choice:~$ "
+select choice in "Update Another Record" "Back To Main Menu" "Back to another Database" "Exit the Application" 
+do
+   case $REPLY in
+    1) ./UpdateRecord.sh $dbname $tbname
+       ;;
+    2). ./MainMenu.sh
+       ;;
+    3). ./OpenDatabase.sh
+       ;;
+    4) exit
+       ;;
+    *) echo "Invalid Selection * Please Try again...!"
+       ;;
+    esac
+done   
