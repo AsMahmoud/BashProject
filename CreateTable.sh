@@ -1,7 +1,6 @@
 #!/bin/bash
 clear
 
-dbname=$1
 while true
 do
     while true
@@ -130,7 +129,7 @@ PS3="Enter Your Choice:~$ "
 select choice in "Add another Table" "Back To Main Menu" "Back to another Database" "Exit the Application" 
 do
    case $REPLY in
-    1). ./CreateTable.sh $dbname
+    1). ./CreateTable.sh 
        ;;
     2). ./MainMenu.sh
        ;;

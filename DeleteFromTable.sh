@@ -1,11 +1,11 @@
 #!/bin/bash
 clear
 
-echo "Table: ""$tablename"
-cat ./Databases/"$dbname"/"$tablename"
+echo "Table: ""$tbname"
+cat ./Databases/"$dbname"/"$tbname"
 echo "======================================================================="
 
-NoOfRecords=`awk -F: 'END {print NR}' ./Databases/"$dbname"/"$tablename"`
+NoOfRecords=`awk -F: 'END {print NR}' ./Databases/"$dbname"/"$tbname"`
 counter=3
 
 #check if this table contain data or not
@@ -29,9 +29,9 @@ else
    #looping till find that number of that primary key and delete this record
    while [ $counter -le $NoOfRecords ]
    do
-     if  [ $PK -eq `awk -F: 'FNR == '$counter' {print $1}' ./Databases/"$dbname"/"$tablename"` ]
+     if  [ $PK -eq `awk -F: 'FNR == '$counter' {print $1}' ./Databases/"$dbname"/"$tbname"` ]
      then
-        sed --in-place "/$PK/d" ./Databases/"$dbname"/"$tablename"
+        sed --in-place "/$PK/d" ./Databases/"$dbname"/"$tbname"
         break
      fi
         ((counter=counter+1)) 
@@ -46,7 +46,7 @@ if [ ! $NoOfRecords == 2 ]
 then
  #printing the table after the deleting operation
   echo "Your Table After Your deleting operaion become as following"
-  cat ./Databases/"$dbname"/"$tablename"
+  cat ./Databases/"$dbname"/"$tbname"
 
   echo "======================================================================="
   echo "please select your next action from the following actions"

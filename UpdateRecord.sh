@@ -1,20 +1,17 @@
 #!/bin/bash
 
-shopt -s extglob    # comment out this line to test unset extglob.
-shopt -p extglob
-
 clear
 
-dbname=$1
-tbname=$2
-
-tb=`cat ./Databases/$dbname/$tbname | wc -l`
+#tb=`cat ./Databases/$dbname/$tbname | wc -l`
   
-if [ "$tb" == 0 ]
-    then
-        echo "Unfortunately, There are no Rows*"
+NoOfRecords=`awk -F: 'END {print NR}' ./Databases/"$dbname"/"$tbname"`
+
+if [ "$NoOfRecords" == 2 ]
+then
+        echo "Unfortunately, There are no Rows in this table*"
 
 else
+    echo "NoOfRecords: ""$NoOfRecords"
     echo "Table: ""$tbname"
     cat ./Databases/$dbname/$tbname
 
@@ -44,14 +41,6 @@ else
     do
        echo  "Choose Column Need To Update "
 
-     # select col in `awk -F: '{i=1; while(i<=NF){if(NR==2){print $i};i++}}' ./Databases/$dbname/$tbname`
-      #do
-      #arr[i]=$i
-       # case $REPLY in
-       # $i) $col ; break ;;
-       # *) echo "invalid n number " ;;
-       # esac
-      #done
        typeset -i ci=2
         for col in `awk -F: '{i=2; while(i<=NF){if(NR==2){print $i};i++}}' ./Databases/$dbname/$tbname`
         do
@@ -138,18 +127,43 @@ fi
 echo "==========================================================="
 echo "please select your next action from the following actions"
 PS3="Enter Your Choice:~$ "
-select choice in "Update Another Record" "Back To Main Menu" "Back to another Database" "Exit the Application" 
-do
-   case $REPLY in
-    1) ./UpdateRecord.sh $dbname $tbname
-       ;;
-    2). ./MainMenu.sh
-       ;;
-    3). ./OpenDatabase.sh
-       ;;
-    4) exit
-       ;;
-    *) echo "Invalid Selection * Please Try again...!"
-       ;;
-    esac
-done   
+if [ ! $NoOfRecords == 2 ]
+then
+    select choice in  "Insert Into Table" "Delete From Table" "Update Another Record" "Back To Main Menu" "Back to another Database" "Exit the Application" 
+    do
+    case $REPLY in
+        1) . ./UpdateRecord.sh 
+        ;;
+        2) . ./InsertIntoTable.sh
+        ;;
+        3) . ./DeleteFromTable.sh
+        ;;
+        4). ./MainMenu.sh
+        ;;
+        5). ./OpenDatabase.sh
+        ;;
+        6) exit
+        ;;
+        *) echo "Invalid Selection * Please Try again...!"
+        ;;
+        esac
+    done 
+else
+    select choice in "Back To Another Table" "Add New Record" "Back To Another Database" "Back To Main Menu" "Exit the Application" 
+    do
+       case $REPLY in
+        1). ./ListSpecificTable.sh
+          ;;
+        2). ./InsertIntoTable.sh
+          ;;
+        3). ./OpenDatabase.sh
+          ;;
+        4). ./MainMenu.sh
+          ;;
+        5) exit
+          ;;
+        *) echo "Invalid Selection 😱 Please Try again...!"
+          ;;
+       esac
+    done
+fi      

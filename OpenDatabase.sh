@@ -45,10 +45,10 @@ echo "please select your next action from the following actions"
 PS3="Enter Your Choice:~$ "
 if [ ! "$db" == 0 ]
 then
-        select choice in "Create New Table" "Delete Specific Table" "List Specific Table" "List All Available Database Tables" "Back To Main Menu" "Exit the Application"
+        select choice in "Create New Table" "Delete Specific Table" "Open Specific Table" "List All Available Database Tables" "Back To Main Menu" "Exit the Application"
         do
         case $REPLY in
-        1) . ./CreateTable.sh $dbname
+        1) . ./CreateTable.sh 
                 ;;
         2) . ./DeleteTable.sh
                 ;;

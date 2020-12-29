@@ -2,11 +2,11 @@
 clear
 
 counter=2
-sepeator=" : "
+sepeator=":"
 NewRecord=""
 
 #adding the primary key values as sequential
-PrimaryKey=$(sed '$!d' ./Databases/"$dbname"/"$tablename" | cut -f1 -d:)
+PrimaryKey=$(sed '$!d' ./Databases/"$dbname"/"$tbname" | cut -f1 -d:)
 expr $PrimaryKey + 0 > /dev/null 2> /dev/null 
 id_found=$?
 if [ $id_found != 0 ]
@@ -17,15 +17,15 @@ else
 fi
 
 #adding the value of the record fields
-NoOfCloumns=`awk -F: 'END {print NF}' ./Databases/"$dbname"/"$tablename"`
+NoOfCloumns=`awk -F: 'END {print NF}' ./Databases/"$dbname"/"$tbname"`
 while [ $counter -le $NoOfCloumns ] 
 do
-    ColumnName=`awk -F: 'FNR == 2 {print $'$counter'}' ./Databases/"$dbname"/"$tablename"`
+    ColumnName=`awk -F: 'FNR == 2 {print $'$counter'}' ./Databases/"$dbname"/"$tbname"`
     echo "enter the value of "$ColumnName 
     read data
 
     #data type check
-    data_type=`awk -F: 'FNR == 1 {print $'$counter'}' ./Databases/"$dbname"/"$tablename"`
+    data_type=`awk -F: 'FNR == 1 {print $'$counter'}' ./Databases/"$dbname"/"$tbname"`
       if [ $data_type == Integer ]
       then
           if [[ ! $data =~  ^[0-9][0-9]*$  ]]
@@ -54,7 +54,7 @@ do
     ((counter=counter+1))
 done
 NewRecord=$PrimaryKey$sepeator$NewRecord
-echo $NewRecord >> ./Databases/"$dbname"/"$tablename"
+echo $NewRecord >> ./Databases/"$dbname"/"$tbname"
 
 clear
 echo "congratulations, Your Record has been Added successfully 😀"
@@ -62,7 +62,7 @@ echo "==========================================================="
 
 #printing the table after the adding operation
 echo "Your Table After Your adding operaion become as following"
-cat ./Databases/"$dbname"/"$tablename"
+cat ./Databases/"$dbname"/"$tbname"
 
 echo "==========================================================="
 echo "please select your next action from the following actions"

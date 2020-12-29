@@ -16,19 +16,19 @@ tb=`ls ./Databases/$dbname | wc -l`
         while true
         do
             echo "please Enter the Table Name of the Table you want to List *"
-            read tbnamee
-               if [[ ! "$tbnamee" =~  ^[[:alpha:]][[:alnum:]]*$  ]] 
+            read tbname
+               if [[ ! "$tbname" =~  ^[[:alpha:]][[:alnum:]]*$  ]] 
                then
                 echo "Error with Naming Format of Database *" 
                 echo "Must start with letter" 
                 echo "Contain no spaces" 
                 echo "Only AlphaNumeric is Allowed"
 
-               elif [  -f ./Databases/$dbname/"$tbnamee" ]
+               elif [  -f ./Databases/$dbname/"$tbname" ]
                then
                    clear
-                   echo "Table: ""$tbnamee"
-                   cat ./Databases/$dbname/"$tbnamee"
+                   echo "Table: ""$tbname"
+                   cat ./Databases/$dbname/"$tbname"
                    break
                
                else
@@ -41,22 +41,40 @@ tb=`ls ./Databases/$dbname | wc -l`
 #Operations on Specific datbase
 echo "==================================================================================="
 echo "Please Enter the Operation need to do on this table *"
-select choice in "Insert Into Table" "Delete Specific Row" "Update Specific Record" "Back To Main Menu" "Exit the Application"
-do
-    case $REPLY in
-    1) . ./Insert.sh
+PS3="Enter Your Choice:~$ "
+if [ ! "$tb" == 0 ]
+then
+    select choice in "Insert Into Table" "Delete From Table" "Update Specific Record" "Back To Main Menu" "Exit the Application"
+    do
+        case $REPLY in
+        1) . ./InsertIntoTable.sh
+                ;;
+        2) . ./DeleteFromTable.sh
+                ;;
+        3) . ./UpdateRecord.sh 
             ;;
-    2) . ./DeleteRow.sh
-            ;;
-    3) . ./UpdateRecord.sh $dbname $tbnamee
-           ;;
-    4) . ./MainMenu.sh
-            ;;
-    5)    exit
-            ;;
-    *)  echo "Invalid Selection  Please Try again...!"
-            ;;
-    esac
-done
+        4) . ./MainMenu.sh
+                ;;
+        5)    exit
+                ;;
+        *)  echo "Invalid Selection  Please Try again...!"
+                ;;
+        esac
+    done
+else
+     select choice in "Back To Main Menu" "Exit the Application" 
+      do
+          case $REPLY in
+            1). ./MainMenu.sh
+                  ;;
+            2) exit
+                  ;;
+            *) echo "Invalid Selection * Please Try again...!"
+                  ;;
+          esac
+      done
+fi    
+
+
 
 
